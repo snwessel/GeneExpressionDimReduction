@@ -20,7 +20,7 @@ def combine_gene_expression_files():
     df = pd.concat([df, project_df], axis=1)
     print("\tcombined shape:", df.shape)
   # save the dataframe to csv
-  np.savetxt("data/processed-data/gene-expression.csv", df.to_numpy(), delimiter=",")
+  np.savetxt("data/processed-data/gene-expression.csv", df.to_numpy().T, delimiter=",")
   # save the ordered barcodes to csv
   barcodes = np.array(df.columns).T
   np.savetxt("data/processed-data/ordered-barcodes.csv", barcodes, delimiter=",", fmt='%s')
@@ -52,4 +52,4 @@ def process_metadata():
 
 
 combine_gene_expression_files()
-process_metadata()
+#process_metadata()
