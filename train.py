@@ -1,5 +1,6 @@
 from app import data_loader
 
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -7,7 +8,11 @@ from sklearn.manifold import TSNE
 # load gene expression data as a numpy array
 print("Loading data...")
 dl = data_loader.DataLoader()
-X = dl.load_data_files()
+X = np.genfromtxt("processed-data\\gene-expression.csv", delimiter=",")
+X = X[:300]
+print("X head:", X[:5, :5])
+print("X shape:", X.shape)
+
 
 # embed using t-SNE
 print("Reducing dimensions...")
