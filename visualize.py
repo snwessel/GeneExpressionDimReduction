@@ -8,8 +8,6 @@ num_points = 300
 # load gene expression data as a numpy array
 print("Loading data...")
 X = np.genfromtxt("data/processed-data/gene-expression.csv", delimiter=",")
-X = X[:num_points]
-print("X head:", X[:5, :5])
 print("X shape:", X.shape)
 
 # embed using t-SNE
@@ -24,21 +22,21 @@ pca_components = fit.components_
 
 # load the diagnosis labels
 labels = np.genfromtxt("data/processed-data/ordered-diagnoses.csv", delimiter=",", dtype=str)
-labels = labels[:num_points]
 
 # create the plots
 fig, ax = plt.subplots()
 for label in np.unique(labels):
-  ix = np.where(labels == label)
-  ax.scatter(X_embedded.T[0][ix], X_embedded.T[1][ix], label=label)
-ax.legend()
+  print("graphing label", label)
+  i = np.where(labels == label)
+  ax.scatter(X_embedded.T[0][i], X_embedded.T[1][i], label=label)
+ax.legend(title="Tumor Diagnosis")
 plt.title("t-SNE")
 plt.show()
 
 fig, ax = plt.subplots()
 for label in np.unique(labels):
-  ix = np.where(labels == label)
-  ax.scatter(pca_components.T[0][ix], pca_components.T[1][ix], label=label)
-ax.legend()
+  i = np.where(labels == label)
+  ax.scatter(pca_components[0][i], pca_components[1][i], label=label)
+ax.legend(title="Tumor Diagnosis")
 plt.title("PCA")
 plt.show()

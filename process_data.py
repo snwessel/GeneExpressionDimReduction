@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import time
 
-project_names = ["TCGA-LAML", "TCGA-HNSC"]
+project_names = ["TCGA-LAML", "TCGA-HNSC", "TCGA-KIRC"]
 
 
 def combine_gene_expression_files():
@@ -51,5 +51,7 @@ def process_metadata():
   np.savetxt("data/processed-data/ordered-diagnoses.csv", ordered_diagnoses.T, delimiter=",", fmt='%s')
 
 
+# TODO: make another function that filters out labels with small frequencies
+
 combine_gene_expression_files()
-#process_metadata()
+process_metadata()
