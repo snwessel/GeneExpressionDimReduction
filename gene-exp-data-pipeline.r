@@ -12,7 +12,8 @@ for (project_name in projects) {
                     experimental.strategy = "RNA-Seq")
   
   # Download files (about 546MB of data)
-  data_path = paste("C:/Users/Sarah/Desktop/Repos/GeneExpressionDimReduction/data/", project_name, sep="")
+  data_path = paste("C:/Users/Sarah/Desktop/Repos/GeneExpressionDimReduction/data/raw-downloads/", 
+                    project_name, sep="")
   GDCdownload(query, 
               method = "api", 
               files.per.chunk = 20, 
@@ -26,9 +27,22 @@ for (project_name in projects) {
   cleaned_data <- subset(metadata, select=-c(treatments, primary_site, disease_type))
 
   # write the metadata to CSV
-  filename = paste("C:/Users/Sarah/Desktop/Repos/GeneExpressionDimReduction/metadata/", project_name, ".csv", sep="")
+  filename = paste("C:/Users/Sarah/Desktop/Repos/GeneExpressionDimReduction/data/metadata/", project_name, ".csv", sep="")
   write_csv(
     cleaned_data,
+    filename,
+    na = "NA",
+    append = FALSE,
+    col_names = TRUE,
+    quote_escape = "double",
+    eol = "\n"
+  )
+  
+  # write the gene expression values to CSV
+  assay_data = as.data.frame(assay(data))
+  filename = paste("C:/Users/Sarah/Desktop/Repos/GeneExpressionDimReduction/data/gene-expression/", project_name, ".csv", sep="")
+  write_csv(
+    assay_data,
     filename,
     na = "NA",
     append = FALSE,
