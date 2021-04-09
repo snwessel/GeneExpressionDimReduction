@@ -1,8 +1,7 @@
 import csv
-import gzip
 import numpy as np
-import os
 import pandas as pd
+from sklearn import preprocessing
 import time
 
 project_names = ["TCGA-LAML", "TCGA-HNSC", "TCGA-KIRC"]
@@ -50,8 +49,39 @@ def process_metadata():
   # save to file
   np.savetxt("data/processed-data/ordered-diagnoses.csv", ordered_diagnoses.T, delimiter=",", fmt='%s')
 
+def generate_train_test_data():
+  """Further process the 'processed' data to generate a matrix X and vector y to use in training and testing.
+    Results should be saved to `X.csv` and `y.csv`."""
+  # load the processed data using numpy from ordered-diagnoses.csv and gene-expression.csv
+  print("Loading processed data from file...")
+  labels = np.genfromtxt("data/processed-data/ordered-diagnoses.csv", delimiter=",", dtype=str)
+  gene_exp = np.genfromtxt("data/processed-data/gene-expression.csv", delimiter=",")
+  # filter out data with low-frequency labels
+  print("Filtering low-frequency labels")
+  (unique_labels, counts) = np.unique(labels, return_counts=True)
+  for i in range(len(unique_labels)):
+    # if the label count is less than 20, remove all instances of it 
+    if counts[i] < 20:
+      original_size = labels.shape[0]
+      label_filter = labels != unique_labels[i]
+      labels = labels[label_filter]
+      gene_exp = gene_exp[label_filter]
+      print("\tRemoved", original_size - labels.shape[0], "records with label", unique_labels[i])
+  # log the new number of each diagnosis
+  (unique, counts) = np.unique(labels, return_counts=True)
+  print("New diagnosis counts:", np.asarray((unique, counts)).T)
 
-# TODO: make another function that filters out labels with small frequencies
+  # embed labels using sklearn's LabelEncoder
+  le = preprocessing.LabelEncoder()
+  le.fit(labels)
+  encoded_labels = le.transform(labels)
 
-combine_gene_expression_files()
-process_metadata()
+  # save cleaned data to data/train-test-data folders
+  np.savetxt("data/train-test-data/y.csv", encoded_labels, delimiter=",", fmt="%u ")
+  np.savetxt("data/train-test-data/X.csv", gene_exp, delimiter=",")
+
+start_time = time.perf_counter()
+#combine_gene_expression_files()
+#process_metadata()
+generate_train_test_data()
+print("Operation took", int(time.perf_counter() - start_time), "seconds.")
