@@ -37,14 +37,15 @@ class AE(nn.Module):
         return self.o(z)
 
 
-def train_AE(X_in, X_target, model, optimizer, loss_function, EPOCHS=10):
+def train_AE(X_in, X_target, model, optimizer, loss_function, EPOCHS=20):
     for epoch in range(EPOCHS):  
         idx, batch_num = 0, 0
-        batch_size = 200
+        batch_size = 100
 
         print("Training epoch...")
-        while idx < 60000:
+        while idx < 1284: #TODO automatically get this number 
             # zero the parameter gradients
+            model.zero_grad() # added this
             optimizer.zero_grad()
 
             X_batch = X_in[idx: idx + batch_size].float()
@@ -60,12 +61,8 @@ def train_AE(X_in, X_target, model, optimizer, loss_function, EPOCHS=10):
               optimizer.step()
 
             # print out loss
-            if batch_num % 10 == 0:
+            if batch_num % 5 == 0:
                 print("\tepoch: {}, batch: {} // loss: {:.3f}".format(epoch, batch_num, loss.item()))
-            
-            # print("\t\tAny NAN:", np.isnan(X).any())
-            # print("\t\tmax encoder param:", torch.max(model.i.weight.grad))
-            # print("\t\tmin encoder param:", torch.min(model.i.weight.grad))
 
             batch_num += 1
 
@@ -79,14 +76,13 @@ print("\tX shape:", X.shape)
 
 print("Converting to tensor and normalizing...")
 start_time = time.perf_counter()
-#X = F.normalize(torch.tensor(X)) # TODO: check that this is normalizing across the correct dimension
 X = torch.tensor(X)
 auto = AE(hidden_size=100)
 print("\tFinished after", time.perf_counter()-start_time, "seconds.")
 
 loss_function = nn.L1Loss()
 auto = AE()
-optimizer = optim.SGD(auto.parameters(), lr=0.00001, momentum=0.9)
+optimizer = optim.Adamax(auto.parameters())
 
 print("Training...")
 start_time = time.perf_counter()
@@ -94,25 +90,25 @@ train_AE(X, X, auto, optimizer, loss_function, EPOCHS=5)
 print("\tFinished after", time.perf_counter()-start_time, "seconds.")
 
 
-# print("Encoding the data...")
-# X_embedded = auto.forward(X.float(), return_z=True)
-# print("\tembedded shape:", X_embedded.shape)
+print("Encoding the data...")
+X_embedded = auto.forward(X.float(), return_z=True).detach().numpy()
+print("\tembedded shape:", X_embedded.shape)
 
-# # load the diagnosis labels
-# labels = np.genfromtxt("data/train-test-data/y.csv", delimiter=",", dtype=int)
-# label_name_dict = {
-#   0: "Acute myeloid leukemia",
-#   1: "Clear cell adenocarcinoma",
-#   2: "Squamous cell carcinoma"
-# }
+# load the diagnosis labels
+labels = np.genfromtxt("data/train-test-data/y.csv", delimiter=",", dtype=int)
+label_name_dict = {
+  0: "Acute myeloid leukemia",
+  1: "Clear cell adenocarcinoma",
+  2: "Squamous cell carcinoma"
+}
 
-# # create the plots
-# fig, ax = plt.subplots()
-# for label in np.unique(labels):
-#   print("graphing label", label)
-#   i = np.where(labels == label)
-#   label_name = label_name_dict[label]
-#   ax.scatter(X_embedded.T[0][i], X_embedded.T[1][i], label=label_name)
-# ax.legend(title="Tumor Diagnosis")
-# plt.title("Auto-Encoder")
-# plt.show()
+# create the plots
+fig, ax = plt.subplots()
+for label in np.unique(labels):
+  print("graphing label", label)
+  i = np.where(labels == label)
+  label_name = label_name_dict[label]
+  ax.scatter(X_embedded.T[0][i], X_embedded.T[1][i], label=label_name)
+ax.legend(title="Tumor Diagnosis")
+plt.title("Auto-Encoder")
+plt.show()
