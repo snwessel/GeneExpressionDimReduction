@@ -2,6 +2,7 @@ import csv
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+from imblearn.under_sampling import RandomUnderSampler
 import time
 
 project_names = ["TCGA-LAML", "TCGA-HNSC", "TCGA-KIRC"]
@@ -76,9 +77,12 @@ def generate_train_test_data():
   le.fit(labels)
   encoded_labels = le.transform(labels)
 
+  # undersample the data (so all label counts are the same)
+  undersampled_X, undersampled_y = RandomUnderSampler().fit_resample(gene_exp, encoded_labels)
+
   # save cleaned data to data/train-test-data folders
-  np.savetxt("data/train-test-data/y.csv", encoded_labels, delimiter=",", fmt="%u ")
-  np.savetxt("data/train-test-data/X.csv", gene_exp, delimiter=",")
+  np.savetxt("data/train-test-data/y.csv", undersampled_y, delimiter=",", fmt="%u ")
+  np.savetxt("data/train-test-data/X.csv", undersampled_X, delimiter=",")
 
 start_time = time.perf_counter()
 #combine_gene_expression_files()
