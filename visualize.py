@@ -34,18 +34,16 @@ plt.title("t-SNE")
 plt.show()
 
 # embed using PCA
-kernels = ["linear", "poly", "rbf", "sigmoid", "cosine", "precomputed"]
-for kernel in kernels:
-  print("Running PCA with the kernel", kernel)
-  pca = KernelPCA(n_components = 2)
-  fit = pca.fit(X.T)
-  pca_components = fit.components_
 
-  fig, ax = plt.subplots()
-  for label in np.unique(labels):
-    i = np.where(labels == label)
-    label_name = label_name_dict[label]
-    ax.scatter(pca_components[0][i], pca_components[1][i], label=label_name)
-  ax.legend(title="Tumor Diagnosis")
-  plt.title("PCA with " + kernel + "kernel")
-  plt.show()
+pca = PCA(n_components = 2)
+fit = pca.fit(X.T)
+pca_components = fit.components_
+
+fig, ax = plt.subplots()
+for label in np.unique(labels):
+  i = np.where(labels == label)
+  label_name = label_name_dict[label]
+  ax.scatter(pca_components[0][i], pca_components[1][i], label=label_name)
+ax.legend(title="Tumor Diagnosis")
+plt.title("PCA")
+plt.show()
