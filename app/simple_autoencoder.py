@@ -1,14 +1,4 @@
-
-import matplotlib.pyplot as plt
-import numpy as np
-import time
 from torch import nn
-import torch.optim as optim
-import torch.nn.functional as F
-import torch
-from torch import autograd
-
-
 
 class AE(nn.Module):
     
@@ -61,46 +51,3 @@ def train_AE(X_in, X_target, model, optimizer, loss_function, EPOCHS):
         # print out loss
         if epoch % 5 == 0:
             print("\tepoch: {}, loss: {:.3f}".format(epoch, loss.item()))
-
-
-# load data from file
-start_time = time.perf_counter()
-print("Loading data...")
-X = np.genfromtxt("data/train-test-data/X.csv", delimiter=",")
-print("\tFinished after", time.perf_counter()-start_time, "seconds.")
-print("\tX shape:", X.shape)
-X = torch.tensor(X)
-
-loss_function = nn.L1Loss()
-auto = AE()
-optimizer = optim.SGD(auto.parameters(), lr=0.000001, momentum=0.9)
-
-print("Training...")
-start_time = time.perf_counter()
-train_AE(X, X, auto, optimizer, loss_function, EPOCHS=75)
-print("\tFinished after", time.perf_counter()-start_time, "seconds.")
-
-
-print("Encoding the data...")
-X_embedded = auto.forward(X.float(), return_z=True).detach().numpy()
-print("\tembedded shape:", X_embedded.shape)
-
-# load the diagnosis labels
-labels = np.genfromtxt("data/train-test-data/y.csv", delimiter=",", dtype=int)
-label_name_dict = {
-  0: "Acute myeloid leukemia",
-  1: "Clear cell adenocarcinoma",
-  2: "Pheochromocytoma",
-  3: "Squamous cell carcinoma"
-}
-
-# create the plots
-fig, ax = plt.subplots()
-for label in np.unique(labels):
-  print("graphing label", label)
-  i = np.where(labels == label)
-  label_name = label_name_dict[label]
-  ax.scatter(X_embedded.T[0][i], X_embedded.T[1][i], label=label_name)
-ax.legend(title="Tumor Diagnosis")
-plt.title("Auto-Encoder")
-plt.show()
