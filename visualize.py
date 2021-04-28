@@ -42,14 +42,14 @@ plt.show()
 
 # embed using PCA & visualize
 pca = PCA(n_components = 2)
-fit = pca.fit(X.T)
-pca_components = fit.components_
+pca.fit(X)
+X_embedded = pca.transform(X)
 
 fig, ax = plt.subplots()
 for label in np.unique(labels):
   i = np.where(labels == label)
   label_name = label_name_dict[label]
-  ax.scatter(pca_components[0][i], pca_components[1][i], label=label_name)
+  ax.scatter(X_embedded.T[0][i], X_embedded.T[1][i], label=label_name)
 ax.legend(title="Tumor Diagnosis")
 plt.title("PCA")
 plt.show()
