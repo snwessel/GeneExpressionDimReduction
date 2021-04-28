@@ -1,5 +1,5 @@
 # iterate through the projects we want to query
-projects <- list("TCGA-KIRC", "TCGA-HNSC", "TCGA-LAML")
+projects <- list("TCGA-UVM", "TCGA-PCPG", "TCGA-KIRC", "TCGA-HNSC", "TCGA-LAML")
 for (project_name in projects) {
   
   # Download gene expression data from a legacy GDC database

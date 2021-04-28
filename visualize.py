@@ -15,7 +15,8 @@ labels = np.genfromtxt("data/train-test-data/y.csv", delimiter=",", dtype=int)
 label_name_dict = {
   0: "Acute myeloid leukemia",
   1: "Clear cell adenocarcinoma",
-  2: "Squamous cell carcinoma"
+  2: "Pheochromocytoma",
+  3: "Squamous cell carcinoma"
 }
 
 

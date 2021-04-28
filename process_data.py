@@ -5,7 +5,7 @@ from sklearn import preprocessing
 from imblearn.under_sampling import RandomUnderSampler
 import time
 
-project_names = ["TCGA-LAML", "TCGA-HNSC", "TCGA-KIRC"]
+project_names = ["TCGA-LAML", "TCGA-HNSC", "TCGA-KIRC", "TCGA-UVM", "TCGA-PCPG"]
 
 
 def combine_gene_expression_files():
@@ -62,7 +62,7 @@ def generate_train_test_data():
   (unique_labels, counts) = np.unique(labels, return_counts=True)
   for i in range(len(unique_labels)):
     # if the label count is less than 20, remove all instances of it 
-    if counts[i] < 20:
+    if counts[i] < 40:
       original_size = labels.shape[0]
       label_filter = labels != unique_labels[i]
       labels = labels[label_filter]
