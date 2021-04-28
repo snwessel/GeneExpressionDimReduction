@@ -37,13 +37,13 @@ class AE(nn.Module):
         return self.o(z)
 
 
-def train_AE(X_in, X_target, model, optimizer, loss_function, EPOCHS=20):
+def train_AE(X_in, X_target, model, optimizer, loss_function, EPOCHS):
     for epoch in range(EPOCHS):  
         idx, batch_num = 0, 0
-        batch_size = 100
+        batch_size = 1000
 
         print("Training epoch...")
-        while idx < 1284: #TODO automatically get this number 
+        while idx < 453: #TODO automatically get this number 
             # zero the parameter gradients
             model.zero_grad() # added this
             optimizer.zero_grad()
@@ -82,11 +82,11 @@ print("\tFinished after", time.perf_counter()-start_time, "seconds.")
 
 loss_function = nn.L1Loss()
 auto = AE()
-optimizer = optim.Adamax(auto.parameters())
+optimizer = optim.SGD(auto.parameters(), lr=0.0001, momentum=0.9)
 
 print("Training...")
 start_time = time.perf_counter()
-train_AE(X, X, auto, optimizer, loss_function, EPOCHS=5)
+train_AE(X, X, auto, optimizer, loss_function, EPOCHS=15)
 print("\tFinished after", time.perf_counter()-start_time, "seconds.")
 
 
