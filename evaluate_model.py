@@ -31,9 +31,12 @@ classifier = MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=300,activat
 classifier.fit(X_train, y_train)
 
 # Evaluate performance 
-print("Evaluating performance...")
-y_pred = classifier.predict(X_test)
 target_names = ['class 0', 'class 1', 'class 2']
+print("Training performance...")
+print(classification_report(y_train, classifier.predict(X_train), target_names=target_names))
+
+print("Testing performance...")
+y_pred = classifier.predict(X_test)
 print(classification_report(y_test, y_pred, target_names=target_names))
 
 # log time taken
