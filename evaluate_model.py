@@ -20,7 +20,7 @@ print("y shape:", y.shape)
 
 
 encoding_methods = ["pca", "tsne", "ae"]
-n_dimensions = [2, 3, 8, 16]
+n_dimensions = [2, 3, 8, 16, 200]
 for method in encoding_methods:
   for n_dim in n_dimensions:
     # Divide training and testing data and encode X
@@ -28,9 +28,8 @@ for method in encoding_methods:
     print("Encoding to ", n_dim, "dimensions using ", method, "...")
     if method == "tsne" and n_dim < 4:
       tsne = TSNE(n_components=n_dim)
-      tsne.fit(X_train)
-      X_train = tsne.transform(X_train)
-      X_test = tsne.transform(X_test)
+      X_embedded = tsne.fit_transform(X) # fitting can't be done on just the training set for tsne
+      X_train, X_test, y_train, y_test = train_test_split(X_embedded, y, test_size=0.33, random_state=42)
     if method == "pca":
       pca = PCA(n_components=n_dim)
       pca.fit(X_train)
